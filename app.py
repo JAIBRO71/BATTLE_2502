@@ -1,11 +1,24 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import requests
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-API_KEY = "rc_e707ebd7230ae4145d20fa15dbf2b0f090707e47d8df7aa84046f77f452c43c6"
+API_KEY = os.getenv("API_KEY")
+
+@app.route("/")
+def home():
+    return send_from_directory(".", "index.html")
+
+@app.route("/style.css")
+def style():
+    return send_from_directory(".", "style.css")
+
+@app.route("/script.js")
+def script():
+    return send_from_directory(".", "script.js")
 
 @app.route("/resolve", methods=["POST"])
 def resolve():
@@ -40,8 +53,6 @@ def resolve():
         )
 
         result = response.json()
-
-        print(result)
 
         if "choices" in result:
             return jsonify({
