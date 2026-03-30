@@ -1,30 +1,48 @@
-function resolveConflict() {
+async function resolveConflict() {
     const input = document.getElementById("input").value;
     const output = document.getElementById("output");
 
-    let result = "";
+    output.innerHTML = `
+        <h3>Decision:</h3>
+        <p>Analyzing requirements using AI...</p>
+    `;
 
-    if (input.toLowerCase().includes("hotel")) {
-        result = `
+    try {
+        const response = await fetch("https://api.featherless.ai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer YOUR_API_KEY_HERE"
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are an AI conflict resolver. Analyze conflicting requirements and give the best balanced recommendation with a short explanation."
+                    },
+                    {
+                        role: "user",
+                        content: input
+                    }
+                ],
+                temperature: 0.7
+            })
+        });
+
+        const data = await response.json();
+
+        const aiReply = data.choices[0].message.content;
+
+        output.innerHTML = `
             <h3>Decision:</h3>
-            <p><strong>Recommended Option:</strong> Mid-range hotel near the airport</p>
-            <p>A luxury 5-star hotel near the airport may exceed the ₹3000 budget. 
-            So the system prioritizes airport access and budget while still suggesting a comfortable hotel.</p>
+            <p>${aiReply}</p>
         `;
-    } else if (input.toLowerCase().includes("laptop")) {
-        result = `
-            <h3>Decision:</h3>
-            <p><strong>Recommended Option:</strong> Gaming laptop with RTX 3050 and 16GB RAM</p>
-            <p>Lightweight laptops with RTX graphics and 16GB RAM under ₹50,000 are rare, 
-            so the system prioritizes performance over portability.</p>
+    } catch (error) {
+        output.innerHTML = `
+            <h3>Error:</h3>
+            <p>Failed to connect to AI service.</p>
         `;
-    } else {
-        result = `
-            <h3>Decision:</h3>
-            <p>Conflict analyzed successfully.</p>
-            <p>The system balanced the requirements and selected the most practical option.</p>
-        `;
+        console.error(error);
     }
-
-    output.innerHTML = result;
 }
