@@ -12,7 +12,7 @@ async function resolveConflict() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer YOUR_API_KEY_HERE"
+                "Authorization": "Bearer rc_e707ebd7230ae4145d20fa15dbf2b0f090707e47d8df7aa84046f77f452c43c6"
             },
             body: JSON.stringify({
                 model: "gpt-4o-mini",
